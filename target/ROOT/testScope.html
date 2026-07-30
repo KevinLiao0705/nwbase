@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Professional Scope Controller Test</title>
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --card: #ffffff;
+      --line: #d0d7e2;
+      --text: #1e293b;
+      --muted: #5b6b83;
+      --primary: #0f62fe;
+      --ok: #0e9f6e;
+      --warn: #b54708;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: "Segoe UI", "Noto Sans TC", sans-serif;
+      background: linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+      color: var(--text);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+    }
+
+    p.sub {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .card h2 {
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    select, input, button {
+      width: 100%;
+      border: 1px solid #c2ccda;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 14px;
+      background: #fff;
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: 600;
+      background: #f7faff;
+    }
+
+    button.primary {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .status {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 10px;
+      min-height: 18px;
+    }
+
+    .ok { color: var(--ok); }
+    .warn { color: var(--warn); }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .chip {
+      border: 1px solid #cfd8e6;
+      background: #f7faff;
+      border-radius: 999px;
+      font-size: 12px;
+      padding: 4px 10px;
+      color: #334155;
+    }
+
+    pre {
+      margin: 0;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #d8e0ec;
+      background: #0b1020;
+      color: #dbe7ff;
+      font-size: 12px;
+      line-height: 1.45;
+      overflow: auto;
+      max-height: 68vh;
+    }
+
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      pre { max-height: 50vh; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Professional Scope Controller 測試頁</h1>
+  <p class="sub">此頁只依賴 <code>ProfessionalScopeController.js</code>，可獨立測試狀態管理、Preset、Undo/Redo 與 UI Bindings。</p>
+
+  <div class="layout">
+    <section class="card">
+      <h2>控制面板</h2>
+
+      <div class="row">
+        <div>
+          <label>Preset</label>
+          <select id="presetSel">
+            <option value="default">default</option>
+            <option value="pulse">pulse</option>
+            <option value="power">power</option>
+          </select>
+        </div>
+        <div>
+          <label>Channel</label>
+          <select id="channelSel">
+            <option value="0">CH1</option>
+            <option value="1">CH2</option>
+            <option value="2">CH3</option>
+            <option value="3">CH4</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Scale</label>
+          <input id="scaleInput" type="number" step="0.1" min="0.1" value="1" />
+        </div>
+        <div>
+          <label>Offset</label>
+          <input id="offsetInput" type="number" step="0.1" value="0" />
+        </div>
+      </div>
+
+      <div class="row">
+        <button id="runBtn" class="primary">RUN</button>
+        <button id="stopBtn">STOP</button>
+      </div>
+
+      <div class="row">
+        <button id="applyPresetBtn">套用 Preset</button>
+        <button id="applyChBtn">套用 CH 設定</button>
+      </div>
+
+      <div class="row">
+        <button id="undoBtn">UNDO</button>
+        <button id="redoBtn">REDO</button>
+      </div>
+
+      <div class="row">
+        <button id="exportBtn">Export JSON</button>
+        <button id="importBtn">Import JSON</button>
+      </div>
+
+      <div class="status" id="statusText">初始化中...</div>
+    </section>
+
+    <section class="card">
+      <h2>即時狀態</h2>
+      <div class="chips" id="bindChips"></div>
+      <pre id="stateView"></pre>
+    </section>
+  </div>
+
+  <script src="ProfessionalScopeController.js"></script>
+  <script>
+    (function () {
+      const statusText = document.getElementById("statusText");
+      const stateView = document.getElementById("stateView");
+      const bindChips = document.getElementById("bindChips");
+
+      const presetSel = document.getElementById("presetSel");
+      const channelSel = document.getElementById("channelSel");
+      const scaleInput = document.getElementById("scaleInput");
+      const offsetInput = document.getElementById("offsetInput");
+
+      if (typeof ProfessionalScopeController !== "function") {
+        statusText.textContent = "載入失敗：找不到 ProfessionalScopeController";
+        statusText.className = "status warn";
+        return;
+      }
+
+      const controller = new ProfessionalScopeController({
+        onStateChanged: null,
+        onError: function (message) {
+          statusText.textContent = "Error: " + message;
+          statusText.className = "status warn";
+        }
+      });
+
+      controller.config.onStateChanged = function (state, reason) {
+        render(state, reason);
+      };
+
+      function setStatus(text, ok) {
+        statusText.textContent = text;
+        statusText.className = ok ? "status ok" : "status warn";
+      }
+
+      function render(state, reason) {
+        const ui = controller.toUiBindings();
+        bindChips.innerHTML = "";
+
+        const chips = [
+          "reason: " + reason,
+          "runColor: " + ui.runColor,
+          "selectedChannel: " + ui.selectedChannel,
+          "selectedScale: " + ui.selectedScale,
+          "selectedOffset: " + ui.selectedOffset,
+          "timebaseScale: " + ui.timebaseScale,
+          "triggerLevel: " + ui.triggerLevel
+        ];
+
+        chips.forEach(function (text) {
+          const span = document.createElement("span");
+          span.className = "chip";
+          span.textContent = text;
+          bindChips.appendChild(span);
+        });
+
+        stateView.textContent = JSON.stringify({
+          state: state,
+          uiBindings: ui
+        }, null, 2);
+
+        const ch = state.channels[state.selectedChannel] || state.channels[0];
+        channelSel.value = String(state.selectedChannel);
+        scaleInput.value = ch ? ch.scale : 1;
+        offsetInput.value = ch ? ch.offset : 0;
+      }
+
+      document.getElementById("runBtn").addEventListener("click", function () {
+        controller.applyAction({ type: "RUN" });
+        setStatus("RUN sent", true);
+      });
+
+      document.getElementById("stopBtn").addEventListener("click", function () {
+        controller.applyAction({ type: "STOP" });
+        setStatus("STOP sent", true);
+      });
+
+      document.getElementById("applyPresetBtn").addEventListener("click", function () {
+        controller.applyAction({ type: "LOAD_PRESET", payload: presetSel.value });
+        setStatus("Preset applied: " + presetSel.value, true);
+      });
+
+      document.getElementById("applyChBtn").addEventListener("click", function () {
+        const idx = parseInt(channelSel.value, 10);
+        const scale = parseFloat(scaleInput.value);
+        const offset = parseFloat(offsetInput.value);
+
+        controller.applyAction({ type: "SELECT_CHANNEL", payload: idx });
+        controller.applyAction({ type: "SET_CHANNEL_SCALE", payload: { index: idx, scale: scale } });
+        controller.applyAction({ type: "SET_CHANNEL_OFFSET", payload: { index: idx, offset: offset } });
+        setStatus("Channel settings applied", true);
+      });
+
+      document.getElementById("undoBtn").addEventListener("click", function () {
+        controller.applyAction({ type: "UNDO" });
+        setStatus("UNDO", true);
+      });
+
+      document.getElementById("redoBtn").addEventListener("click", function () {
+        controller.applyAction({ type: "REDO" });
+        setStatus("REDO", true);
+      });
+
+      document.getElementById("exportBtn").addEventListener("click", function () {
+        const json = JSON.stringify(controller.exportConfig());
+        navigator.clipboard.writeText(json).then(function () {
+          setStatus("Config copied to clipboard", true);
+        }).catch(function () {
+          setStatus("Copy failed (browser permission)", false);
+        });
+      });
+
+      document.getElementById("importBtn").addEventListener("click", function () {
+        const raw = prompt("Paste config JSON:");
+        if (!raw) {
+          return;
+        }
+        try {
+          const data = JSON.parse(raw);
+          const ok = controller.importConfig(data);
+          setStatus(ok ? "Config imported" : "Config import failed", ok);
+        } catch (e) {
+          setStatus("Invalid JSON", false);
+        }
+      });
+
+      controller.loadPreset("default");
+      setStatus("Ready", true);
+    })();
+  </script>
+</body>
+</html>

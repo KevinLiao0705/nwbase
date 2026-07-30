@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<properties>
+	<propertie name="user">
+		<item key="webFrame~kevin" value="password:1234,priority:0" />
+		<item key="keyboardOled~admin" value="password:1234,priority:0" />
+		<item key="sync~admin" value="password:1234,priority:0" />
+		<item key="webIcs~admin" value="password:1234,priority:0" />
+	</propertie>
+</properties>

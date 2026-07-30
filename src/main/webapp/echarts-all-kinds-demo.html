@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ECharts All Kinds Demo</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <style>
+    :root {
+      --bg: #f4f8fb;
+      --panel: #ffffff;
+      --border: #d9e3ee;
+      --title: #10253d;
+      --text: #3f556d;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background:
+        radial-gradient(circle at 8% 4%, rgba(14, 165, 233, 0.16), transparent 25%),
+        radial-gradient(circle at 92% 8%, rgba(16, 185, 129, 0.14), transparent 30%),
+        var(--bg);
+      color: var(--text);
+      overflow: auto;
+    }
+
+    .page {
+      padding: 16px;
+      min-height: 100%;
+    }
+
+    .hero {
+      background: linear-gradient(120deg, #0f2948, #184c73);
+      color: #eaf3ff;
+      border-radius: 14px;
+      padding: 18px 20px;
+      box-shadow: 0 12px 26px rgba(10, 31, 58, 0.28);
+      margin-bottom: 14px;
+    }
+
+    .hero h1 {
+      margin: 0 0 6px;
+      font-size: 1.3rem;
+      letter-spacing: 0.02em;
+    }
+
+    .hero p {
+      margin: 0;
+      opacity: 0.92;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 12px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(18, 40, 66, 0.08);
+      display: flex;
+      flex-direction: column;
+      min-height: 280px;
+      overflow: hidden;
+    }
+
+    .card h2 {
+      margin: 0;
+      padding: 10px 12px;
+      font-size: 0.98rem;
+      color: var(--title);
+      border-bottom: 1px solid var(--border);
+      background: #f8fbff;
+    }
+
+    .chart {
+      width: 100%;
+      height: 100%;
+      min-height: 235px;
+      flex: 1;
+    }
+
+    .span-6 {
+      grid-column: span 6;
+    }
+
+    .span-4 {
+      grid-column: span 4;
+    }
+
+    .span-3 {
+      grid-column: span 3;
+    }
+
+    @media (max-width: 1200px) {
+      .span-3 {
+        grid-column: span 6;
+      }
+
+      .span-4 {
+        grid-column: span 6;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .span-6,
+      .span-4,
+      .span-3 {
+        grid-column: span 12;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="hero">
+      <h1>ECharts 全圖型展示</h1>
+      <p>這個頁面示範常見圖型：Line、Bar、Pie、Scatter、Radar、Gauge、Funnel、Candlestick。</p>
+    </div>
+
+    <div class="grid">
+      <section class="card span-6"><h2>Line Chart</h2><div id="lineChart" class="chart"></div></section>
+      <section class="card span-6"><h2>Bar Chart</h2><div id="barChart" class="chart"></div></section>
+      <section class="card span-4"><h2>Pie Chart</h2><div id="pieChart" class="chart"></div></section>
+      <section class="card span-4"><h2>Scatter Chart</h2><div id="scatterChart" class="chart"></div></section>
+      <section class="card span-4"><h2>Radar Chart</h2><div id="radarChart" class="chart"></div></section>
+      <section class="card span-3"><h2>Gauge Chart</h2><div id="gaugeChart" class="chart"></div></section>
+      <section class="card span-3"><h2>Funnel Chart</h2><div id="funnelChart" class="chart"></div></section>
+      <section class="card span-6"><h2>Candlestick Chart</h2><div id="candlestickChart" class="chart"></div></section>
+    </div>
+  </div>
+
+  <script>
+    function chart(id) {
+      return echarts.init(document.getElementById(id));
+    }
+
+    const line = chart("lineChart");
+    line.setOption({
+      tooltip: { trigger: "axis" },
+      legend: { data: ["Email", "Ads"] },
+      xAxis: { type: "category", data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] },
+      yAxis: { type: "value" },
+      series: [
+        { name: "Email", type: "line", smooth: true, data: [120, 132, 101, 134, 90, 230, 210] },
+        { name: "Ads", type: "line", smooth: true, data: [220, 182, 191, 234, 290, 330, 310] }
+      ]
+    });
+
+    const bar = chart("barChart");
+    bar.setOption({
+      tooltip: { trigger: "axis" },
+      xAxis: { type: "category", data: ["Q1", "Q2", "Q3", "Q4"] },
+      yAxis: { type: "value" },
+      series: [
+        { name: "2025", type: "bar", data: [320, 402, 301, 334], itemStyle: { color: "#0ea5e9" } },
+        { name: "2026", type: "bar", data: [420, 482, 391, 434], itemStyle: { color: "#10b981" } }
+      ]
+    });
+
+    const pie = chart("pieChart");
+    pie.setOption({
+      tooltip: { trigger: "item" },
+      legend: { bottom: 4 },
+      series: [{
+        type: "pie",
+        radius: ["35%", "68%"],
+        data: [
+          { value: 1048, name: "Search" },
+          { value: 735, name: "Direct" },
+          { value: 580, name: "Email" },
+          { value: 484, name: "Union Ads" },
+          { value: 300, name: "Video Ads" }
+        ]
+      }]
+    });
+
+    const scatter = chart("scatterChart");
+    const scatterData = [];
+    for (let i = 0; i < 80; i++) {
+      const x = Math.round(Math.random() * 100);
+      const y = Math.round(Math.random() * 100);
+      scatterData.push([x, y]);
+    }
+    scatter.setOption({
+      tooltip: { trigger: "item" },
+      xAxis: {},
+      yAxis: {},
+      series: [{ type: "scatter", symbolSize: 10, data: scatterData }]
+    });
+
+    const radar = chart("radarChart");
+    radar.setOption({
+      legend: { bottom: 4, data: ["Allocated", "Actual"] },
+      radar: {
+        indicator: [
+          { name: "Sales", max: 6500 },
+          { name: "Admin", max: 16000 },
+          { name: "IT", max: 30000 },
+          { name: "Support", max: 38000 },
+          { name: "Dev", max: 52000 },
+          { name: "Marketing", max: 25000 }
+        ]
+      },
+      series: [{
+        type: "radar",
+        data: [
+          { value: [4200, 3000, 20000, 35000, 50000, 18000], name: "Allocated" },
+          { value: [5000, 14000, 28000, 26000, 42000, 21000], name: "Actual" }
+        ]
+      }]
+    });
+
+    const gauge = chart("gaugeChart");
+    gauge.setOption({
+      series: [{
+        type: "gauge",
+        min: 0,
+        max: 100,
+        progress: { show: true, width: 12 },
+        axisLine: { lineStyle: { width: 12 } },
+        detail: { valueAnimation: true, formatter: "{value}%" },
+        data: [{ value: 68, name: "CPU" }]
+      }]
+    });
+
+    const funnel = chart("funnelChart");
+    funnel.setOption({
+      tooltip: { trigger: "item" },
+      series: [{
+        type: "funnel",
+        left: "10%",
+        top: 20,
+        bottom: 20,
+        width: "80%",
+        sort: "descending",
+        gap: 4,
+        label: { show: true, position: "inside" },
+        data: [
+          { value: 100, name: "Visit" },
+          { value: 80, name: "Download" },
+          { value: 60, name: "Inquiry" },
+          { value: 40, name: "Order" },
+          { value: 20, name: "Deal" }
+        ]
+      }]
+    });
+
+    const candle = chart("candlestickChart");
+    const categories = [];
+    const values = [];
+    let base = 120;
+    for (let i = 1; i <= 30; i++) {
+      categories.push("D" + i);
+      const open = base + (Math.random() * 8 - 4);
+      const close = open + (Math.random() * 10 - 5);
+      const low = Math.min(open, close) - Math.random() * 4;
+      const high = Math.max(open, close) + Math.random() * 4;
+      values.push([open.toFixed(2), close.toFixed(2), low.toFixed(2), high.toFixed(2)]);
+      base = close;
+    }
+    candle.setOption({
+      tooltip: { trigger: "axis" },
+      xAxis: { type: "category", data: categories, boundaryGap: true },
+      yAxis: { scale: true },
+      series: [{ type: "candlestick", data: values }]
+    });
+
+    window.addEventListener("resize", function () {
+      line.resize();
+      bar.resize();
+      pie.resize();
+      scatter.resize();
+      radar.resize();
+      gauge.resize();
+      funnel.resize();
+      candle.resize();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Frame Memo</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --ink: #1f2937;
+      --muted: #475569;
+      --line: #dbe3ef;
+      --brand: #0b5cab;
+      --ok: #0f766e;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 90% -10%, rgba(11, 92, 171, 0.10), transparent 35%),
+        radial-gradient(circle at 5% 10%, rgba(15, 118, 110, 0.10), transparent 30%),
+        var(--bg);
+    }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #0b5cab, #0f766e);
+      color: #fff;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 10px 24px rgba(2, 6, 23, 0.18);
+    }
+
+    .hero h1 {
+      margin: 0 0 6px;
+      font-size: 1.5rem;
+      letter-spacing: 0.02em;
+    }
+
+    .hero p {
+      margin: 0;
+      opacity: 0.95;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      grid-column: span 12;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+    }
+
+    .span-6 { grid-column: span 6; }
+    .span-4 { grid-column: span 4; }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: 1.05rem;
+      color: var(--brand);
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .kvs {
+      display: grid;
+      grid-template-columns: 170px 1fr;
+      gap: 8px 10px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .kvs b { color: var(--ink); }
+
+    pre {
+      margin: 0;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #f8fafc;
+      overflow: auto;
+      line-height: 1.45;
+      color: #0f172a;
+      font-size: 0.88rem;
+    }
+
+    .flow-step {
+      padding: 9px 10px;
+      border: 1px dashed #b9ccdf;
+      border-radius: 10px;
+      background: #f8fbff;
+      color: #334155;
+      margin-bottom: 8px;
+    }
+
+    .tag {
+      display: inline-block;
+      margin: 0 6px 6px 0;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid #b6cbe2;
+      background: #edf5ff;
+      color: #184a80;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .ok {
+      color: var(--ok);
+      font-weight: 600;
+    }
+
+    @media (max-width: 900px) {
+      .span-6, .span-4 { grid-column: span 12; }
+      .kvs { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <h1>NWBase Project Frame Memo</h1>
+      <p>Generated memo for quick onboarding of architecture, runtime flow, and module boundaries.</p>
+    </section>
+
+    <section class="grid">
+      <article class="card span-6">
+        <h2>Project Snapshot</h2>
+        <div class="kvs">
+          <b>Build Type</b><span>Java WAR (Maven)</span>
+          <b>Artifact</b><span>ROOT.war</span>
+          <b>Java Side</b><span>Servlet + Embedded Tomcat bootstrap</span>
+          <b>Frontend</b><span>Single-page style composition with many plain JS modules</span>
+          <b>Data/State</b><span>setdata.xml + SQLite (setdata.db) + runtime global state</span>
+          <b>Main Entry</b><span>index.jsp -> root.html</span>
+        </div>
+      </article>
+
+      <article class="card span-6">
+        <h2>Critical Runtime Endpoints</h2>
+        <ul>
+          <li><b>/</b>: JSP entry, loads and prints root.html content.</li>
+          <li><b>/hello</b>: Servlet endpoint for command-style JSON POST requests.</li>
+          <li><b>Embedded mode</b>: App.java launches Tomcat and maps HelloServlet.</li>
+          <li><b>Web assets</b>: Served from src/main/webapp and packed into ROOT.war.</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>Directory Frame</h2>
+<pre>nwbase/
+  pom.xml
+  README.md
+  src/
+    main/
+      java/com/example/
+        App.java
+        Root.java
+        GB.java, Lib.java, KvJson.java, ImageHandle.java, RetClass.java
+        web/HelloServlet.java
+      webapp/
+        index.jsp
+        root.html
+        Block.js, KvLib.js, MySystem.js, Server.js, MyPlot.js
+        lineChart.js, chart.js, echarts-class-demo.html
+        systemResource/, user-*/
+    setdata.xml
+    setdata.db
+    webServeletBase.properties
+  target/ROOT.war</pre>
+      </article>
+
+      <article class="card span-4">
+        <h2>Frontend Module Layers</h2>
+        <span class="tag">root.html loader</span>
+        <span class="tag">core utilities (KvLib)</span>
+        <span class="tag">UI composition (Block)</span>
+        <span class="tag">domain widgets (lineChart / plot)</span>
+        <span class="tag">system glue (MySystem / Server)</span>
+        <ul>
+          <li>root.html loads many scripts in strict order.</li>
+          <li>onLoad calls sys.indexLoaded() to start runtime.</li>
+          <li>Block.js appears as layout/component construction backbone.</li>
+        </ul>
+      </article>
+
+      <article class="card span-4">
+        <h2>Backend Layer Notes</h2>
+        <ul>
+          <li>HelloServlet handles GET and command-style POST JSON.</li>
+          <li>Root initializes environment, logging, DB, and parameter maps.</li>
+          <li>GB acts as shared global holder for runtime/system variables.</li>
+          <li>SQLite is initialized via Root.dbConnect and para table checks.</li>
+        </ul>
+      </article>
+
+      <article class="card span-4">
+        <h2>External Dependencies</h2>
+        <ul>
+          <li>jakarta.servlet-api 6.0.0 (provided)</li>
+          <li>tomcat-embed-* 10.1.55</li>
+          <li>org.json</li>
+          <li>sqlite-jdbc</li>
+          <li>log4j2 + log4j 1.2 compatibility bridge</li>
+        </ul>
+      </article>
+
+      <article class="card span-6">
+        <h2>Request/Data Flow (High Level)</h2>
+        <div class="flow-step">1) Browser requests <b>/</b> -> index.jsp runs.</div>
+        <div class="flow-step">2) index.jsp sets GB context and instantiates Root(request headers, webRootPath).</div>
+        <div class="flow-step">3) Root performs init: logging, setdata.xml, SQLite sync, network/machine info.</div>
+        <div class="flow-step">4) index.jsp reads root.html and returns full frontend page.</div>
+        <div class="flow-step">5) root.html loads JS modules; sys.indexLoaded() composes UI via Block/KvLib.</div>
+        <div class="flow-step">6) Frontend command calls go to <b>/hello</b> and receive JSON response.</div>
+      </article>
+
+      <article class="card span-6">
+        <h2>Hotspots and Maintenance Tips</h2>
+        <ul>
+          <li>Script load order in root.html is fragile; changing order may break runtime init.</li>
+          <li>Global shared state (GB + many global JS vars) increases coupling across modules.</li>
+          <li>HelloServlet is a large command router; splitting handlers by action would improve maintainability.</li>
+          <li>Mixed legacy/new chart pages coexist (lineChart.js and echarts-*.html); align one strategy over time.</li>
+          <li class="ok">Current packaging and deployment path are coherent for Tomcat root context.</li>
+        </ul>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

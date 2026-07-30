@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ECharts Class Demo</title>
+  <script src="echarts.min.js"></script>
+  <script src='KvLib.js'></script>
+  <script>
+    var parentElemId = null; // 父頁傳入的元素 ID，用於回傳事件時識別來源。
+    (function (global) {
+      "use strict";
+
+      /*
+       * - title: 圖表標題字串
+       * - memoInformation: 備註文字（字串或字串陣列）
+       * - memoInformationShowFlag: 是否顯示備註區塊（boolean）
+       * - chartBackgroundColor: 圖表背景色
+       * - lineColors: 線條顏色（陣列或 { dataSetName: color }）
+       * - timeOffset: 時間偏移（秒數或 HH:MM:SS）
+      * - yAxisViewMinValue / yAxisViewMaxValue: y 軸顯示範圍最小/最大值（可選）
+       * - dataSets: 資料集合（{ dataSetName: number[] }）
+       * - dataSetNames: 顯示順序（若未提供且 dataSets 存在，會自動由 dataSets keys 產生）
+       */
+
+      // 將時間偏移設定轉成秒數，支援數字與 HH:MM:SS 字串。
+
+      function parseTimeOffsetToSeconds(offset) {
+        if (typeof offset === "number" && isFinite(offset)) {// 如果是數字，直接回傳（取整數並確保非負）。
+          return Math.max(0, Math.round(offset));
+        }
+
+        if (typeof offset === "string") {
+          var parts = offset.split(":");
+          if (parts.length === 3) {
+            var h = parseInt(parts[0], 10) || 0;
+            var m = parseInt(parts[1], 10) || 0;
+            var s = parseInt(parts[2], 10) || 0;
+            return Math.max(0, h * 3600 + m * 60 + s);
+          }
+        }
+
+        return 0;
+      }
+
+      function formatHMS(sec) {
+        sec = Math.max(0, Math.round(sec));
+        var h = Math.floor(sec / 3600);
+        var m = Math.floor((sec % 3600) / 60);
+        var s = sec % 60;
+        return String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+      }
+      // 將數字格式化為千分位字串。
+      function formatInt(v) {
+        return Math.round(Number(v) || 0).toLocaleString("en-US");
+      }
+
+      function resolveAxisLimit(primaryValue, legacyValue) {
+        var value = primaryValue;
+        if (value === undefined || value === null || value === "") {
+          value = legacyValue;
+        }
+        if (value === undefined || value === null || value === "") {
+          return null;
+        }
+        var n = Number(value);
+        return isFinite(n) ? n : null;
+      }
+
+      // 將陣列轉換為 [index, value] 的二維陣列，用於 ECharts 的資料格式。
+      function toPairs(intArray) {
+        var out = new Array(intArray.length);
+        for (var i = 0; i < intArray.length; i++) {
+          out[i] = [i, intArray[i]];
+        }
+        return out;
+      }
+
+      // 將備註資訊轉換為字串，支援字串或字串陣列。
+      function resolveMemoText(options) {
+        var memo = options.memoInformation;
+
+        if (Array.isArray(memo)) {
+          return memo.join("\n");
+        }
+
+        if (typeof memo === "string") {
+          return memo;
+        }
+
+        return "";
+      }
+
+      function isMemoEnabled(options) {
+        if (typeof options.memoInformationShowFlag === "boolean") {
+          return options.memoInformationShowFlag;
+        }
+        return true;
+      }
+
+      function SignalLineChart(container, options) {
+        this.options = Object.assign({
+          title: "Signal Line",
+          dataSets: {},
+          dataSetNames: [],
+          memoInformation: "",
+          memoInformationShowFlag: true,
+          lineColors: ["#0ea5e9", "#10b981", "#f59e0b", "#ef4444", "#a855f7"],
+          chartBackgroundColor: "#ffffff",
+          timeOffset: "00:00:00",
+          yAxisViewMinValue: null,
+          yAxisViewMaxValue: null,
+          yAxisMin: null,
+          yAxisMax: null,
+          showResetZoomButton: true
+        }, options || {});
+
+        this.root = typeof container === "string" ? document.getElementById(container) : container;
+        if (!this.root) {
+          throw new Error("SignalLineChart: container not found.");
+        }
+
+        this.chart = null;
+        this.memoEl = null;
+        this.chartEl = null;
+
+        this._buildLayout();
+        this._initChart();
+        this.render();
+      }
+
+      SignalLineChart.prototype._buildLayout = function () {
+        // 建立標題、按鈕、備註與圖表容器的 DOM 結構。
+        this.root.innerHTML = "";
+
+        var wrap = document.createElement("div");
+        wrap.className = "slc-wrap";
+
+        var head = document.createElement("div");
+        head.className = "slc-head";
+
+        var title = document.createElement("h2");
+        title.className = "slc-title";
+        title.textContent = this.options.title;
+        head.appendChild(title);
+
+        var actions = document.createElement("div");
+        actions.className = "slc-actions";
+
+        var leaveBtn = document.createElement("button");
+        leaveBtn.type = "button";
+        leaveBtn.className = "slc-btn";
+        leaveBtn.textContent = "離開";
+        leaveBtn.addEventListener("click", function () {
+          console.log("Leave button clicked. parentElemId:", parentElemId);
+          if (parentElemId) {
+            var parentElem = window.parent.document.getElementById(parentElemId)
+            if (parentElem.md.opts.actionFunc) {
+              parentElem.md.opts.actionFunc({ act: "leaveClicked", at: Date.now() });
+            }
+          }
+        });
+        actions.appendChild(leaveBtn);
+
+        if (this.options.showResetZoomButton) {
+          var btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "slc-btn";
+          btn.textContent = "重置縮放";
+          btn.addEventListener("click", this.resetZoom.bind(this));
+
+          actions.appendChild(btn);
+        }
+
+        head.appendChild(actions);
+
+        wrap.appendChild(head);
+
+        this.memoEl = document.createElement("div");
+        this.memoEl.className = "slc-memo";
+        this.memoEl.style.whiteSpace = "pre-line";
+        wrap.appendChild(this.memoEl);
+
+        this.chartEl = document.createElement("div");
+        this.chartEl.className = "slc-chart";
+        wrap.appendChild(this.chartEl);
+
+        this.root.appendChild(wrap);
+        this._applyMemo();
+      };
+
+      SignalLineChart.prototype._applyMemo = function () {
+        var memoText = resolveMemoText(this.options);
+        var showMemo = isMemoEnabled(this.options);
+
+        if (showMemo && memoText) {
+          this.memoEl.textContent = memoText;
+          this.memoEl.style.display = "block";
+        } else {
+          this.memoEl.style.display = "none";
+        }
+      };
+
+      
+      SignalLineChart.prototype._initChart = function () {
+        // 初始化 ECharts，並在視窗尺寸改變時自動縮放。
+        this.chart = echarts.init(this.chartEl);
+        var self = this;
+        window.addEventListener("resize", function () {
+          if (self.chart) {
+            self.chart.resize();
+          }
+        });
+      };
+      
+      // 根據資料集名稱與索引解析線條顏色，支援陣列與物件格式。
+      SignalLineChart.prototype._resolveColor = function (name, index) {
+        var colors = this.options.lineColors;
+        if (Array.isArray(colors)) {
+          // 依索引循環使用顏色陣列。
+          console.log("resolveColor: name=" + name + ", index=" + index + ", colors=" + colors);
+          return colors[index % colors.length];
+        }
+        if (colors && typeof colors === "object" && colors[name]) {
+          return colors[name];
+        }
+        return "#0ea5e9";
+      };
+
+      SignalLineChart.prototype._buildSeries = function (names, dataSets) {
+        var self = this;
+        return names.map(function (name, idx) {
+          var arr = dataSets[name] || [];
+          return {
+            name: name,
+            type: "line",
+            data: toPairs(arr),
+            showSymbol: false,
+            symbol: "none",
+            hoverAnimation: false,
+            emphasis: { disabled: true },
+            blur: { lineStyle: { opacity: 1 } },
+            lineStyle: {
+              width: 1.3,
+              color: self._resolveColor(name, idx)
+            }
+          };
+        });
+      };
+
+      SignalLineChart.prototype._maxDataLength = function (names, dataSets) {
+        var maxLen = 0;
+        for (var i = 0; i < names.length; i++) {
+          var len = (dataSets[names[i]] || []).length;
+          if (len > maxLen) maxLen = len;
+        }
+        return maxLen;
+      };
+
+      SignalLineChart.prototype._buildOption = function () {
+        // 將資料與互動設定組成 ECharts option。
+        var dataSets = this.options.dataSets || {};
+        var names = this.options.dataSetNames && this.options.dataSetNames.length
+          ? this.options.dataSetNames.slice()
+          : Object.keys(dataSets);
+
+        var timeOffsetSec = parseTimeOffsetToSeconds(this.options.timeOffset);
+        var chartBackgroundColor = this.options.chartBackgroundColor || this.options.backgroundColor || "#ffffff";
+        var yAxisMin = resolveAxisLimit(this.options.yAxisViewMinValue, this.options.yAxisMin);
+        var yAxisMax = resolveAxisLimit(this.options.yAxisViewMaxValue, this.options.yAxisMax);
+        if (yAxisMin !== null && yAxisMax !== null && yAxisMin > yAxisMax) {
+          var swap = yAxisMin;
+          yAxisMin = yAxisMax;
+          yAxisMax = swap;
+        }
+        var maxLen = this._maxDataLength(names, dataSets);
+        var series = this._buildSeries(names, dataSets);
+
+        var yAxisOption = {
+          type: "value",
+          name: "Value",
+          axisLine: { lineStyle: { color: "#64748b" } },
+          axisLabel: { color: "#334155" },
+          splitLine: { lineStyle: { color: "rgba(148, 163, 184, 0.18)" } }
+        };
+        if (yAxisMin !== null) {
+          yAxisOption.min = yAxisMin;
+        }
+        if (yAxisMax !== null) {
+          yAxisOption.max = yAxisMax;
+        }
+
+        return {
+          animation: false,
+          backgroundColor: chartBackgroundColor,
+          legend: {
+            top: 10,
+            data: names
+          },
+          tooltip: {
+            trigger: "axis",
+            transitionDuration: 0,
+            axisPointer: { type: "line", snap: true, animation: false },
+            formatter: function (params) {
+              if (!params || !params.length) return "";
+              var xSec = Math.round(params[0].value[0]);
+              var title = formatInt(xSec) + " s  (" + formatHMS(xSec + timeOffsetSec) + ")";
+
+              var html = '<div style="font-weight:600;margin-bottom:4px">' + title + "</div>";
+              for (var i = 0; i < params.length; i++) {
+                var p = params[i];
+                html += '<div style="display:flex;align-items:center;gap:6px">' +
+                  '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + p.color + '"></span>' +
+                  '<span style="flex:1">' + p.seriesName + "</span>" +
+                  '<span style="font-weight:700;margin-left:12px">' + formatInt(p.value[1]) + "</span>" +
+                  "</div>";
+              }
+              return html;
+            }
+          },
+          toolbox: {
+            right: 8,
+            top: 6,
+            feature: {
+              dataZoom: {},
+              restore: {},
+              saveAsImage: {}
+            }
+          },
+          grid: {
+            left: 56,
+            right: 22,
+            top: 54,
+            bottom: 74
+          },
+          xAxis: {
+            type: "value",
+            name: "Index (second)",
+            min: 0,
+            max: Math.max(0, maxLen - 1),
+            axisLine: { lineStyle: { color: "#64748b" } },
+            axisLabel: { color: "#334155" },
+            splitLine: { lineStyle: { color: "rgba(148, 163, 184, 0.18)" } }
+          },
+          yAxis: yAxisOption,
+          dataZoom: [
+            {
+              type: "inside",
+              xAxisIndex: 0,
+              filterMode: "none",
+              zoomOnMouseWheel: true,
+              moveOnMouseMove: true,
+              moveOnMouseWheel: false,
+              preventDefaultMouseMove: false
+            },
+            {
+              type: "inside",
+              yAxisIndex: 0,
+              filterMode: "none",
+              zoomOnMouseWheel: "shift",
+              moveOnMouseMove: false,
+              moveOnMouseWheel: false,
+              preventDefaultMouseMove: false
+            },
+            {
+              type: "slider",
+              xAxisIndex: 0,
+              filterMode: "none",
+              bottom: 20,
+              height: 16,
+              moveHandleSize: 10,
+              borderColor: "#cbd5e1",
+              fillerColor: "rgba(14, 165, 233, 0.20)",
+              handleStyle: {
+                color: "#0ea5e9",
+                borderColor: "#0369a1"
+              },
+              moveHandleStyle: {
+                color: "#0ea5e9",
+                opacity: 0.6
+              }
+            },
+            {
+              type: "slider",
+              yAxisIndex: 0,
+              filterMode: "none",
+              right: 2,
+              top: 86,
+              bottom: 70,
+              width: 14,
+              moveHandleSize: 10,
+              borderColor: "#cbd5e1",
+              fillerColor: "rgba(16, 185, 129, 0.18)",
+              handleStyle: {
+                color: "#10b981",
+                borderColor: "#047857"
+              },
+              moveHandleStyle: {
+                color: "#10b981",
+                opacity: 0.6
+              }
+            }
+          ],
+          series: series
+        };
+      };
+
+      SignalLineChart.prototype.render = function () {
+        this._applyMemo();
+        this.chart.setOption(this._buildOption(), true);
+      };
+
+      SignalLineChart.prototype.updateOptions = function (nextOptions) {
+        this.options = Object.assign({}, this.options, nextOptions || {});
+        this.render();
+      };
+
+      SignalLineChart.prototype.resetZoom = function () {
+        // 將所有 dataZoom 元件重置為 0%~100%。
+        var dz = (this.chart.getOption() && this.chart.getOption().dataZoom) ? this.chart.getOption().dataZoom : [];
+        for (var i = 0; i < dz.length; i++) {
+          this.chart.dispatchAction({
+            type: "dataZoom",
+            dataZoomIndex: i,
+            start: 0,
+            end: 100
+          });
+        }
+      };
+
+      SignalLineChart.prototype.destroy = function () {
+        if (this.chart) {
+          this.chart.dispose();
+          this.chart = null;
+        }
+        if (this.root) {
+          this.root.innerHTML = "";
+        }
+      };
+
+      SignalLineChart.prototype.parentElemId = null; // 父頁傳入的元素 ID，用於回傳事件時識別來源。
+      global.SignalLineChart = SignalLineChart;
+    })(window);
+  </script>
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --panel: #ffffff;
+      --border: #dbe3ef;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      padding: 0;
+      overflow: hidden;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(14, 165, 233, 0.14), transparent 35%),
+        radial-gradient(circle at 90% 10%, rgba(16, 185, 129, 0.12), transparent 40%),
+        var(--bg);
+      color: #1f2937;
+    }
+
+    .demo-wrap {
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      height: 100%;
+      display: flex;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 0;
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.10);
+      padding: 16px;
+    }
+
+    #chartRoot {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .slc-wrap {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slc-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .slc-title {
+      margin: 0;
+      font-size: 1.2rem;
+      letter-spacing: 0.02em;
+    }
+
+    .slc-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .slc-btn {
+      border: 1px solid #bae6fd;
+      background: #e0f2fe;
+      color: #0c4a6e;
+      border-radius: 999px;
+      padding: 7px 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .slc-btn:hover {
+      background: #bae6fd;
+      transform: translateY(-1px);
+    }
+
+    .slc-memo {
+      margin: 10px 0 12px;
+      padding: 10px 12px;
+      border: 1px solid #dbe3ef;
+      border-radius: 10px;
+      background: #f8fafc;
+      color: #334155;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .slc-chart {
+      width: 100%;
+      flex: 1;
+      min-height: 0;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="demo-wrap">
+    <div id="chartRoot"></div>
+  </div>
+
+  <script>
+
+
+    //var parentElemId = null; // 父頁傳入的元素 ID，用於回傳事件時識別來源。
+
+    function renderSignalLineChart(options) {
+      // 每次重繪前先清空容器，避免重複掛載。
+      const chartRoot = document.getElementById("chartRoot");
+      chartRoot.innerHTML = "";
+      new SignalLineChart("chartRoot", options);
+    }
+
+    const defaultOptions = {
+      title: "Class Based Signal Line Chart",
+      dataSetNames: ["dataSetName1", "dataSetName2", "dataSetName3"],
+      dataSets: { dataSetName1: [], dataSetName2: [], dataSetName3: [] },
+      chartBackgroundColor: "#f8fafc",
+      memoInformation: [
+        "infomation String 1",
+        "infomation string 2",
+        "infomation string3"
+      ],
+      memoInformationShowFlag: true,
+      lineColors: {
+        dataSetName1: "#0ea5e9",
+        dataSetName2: "#10b981",
+        dataSetName3: "#f59e0b"
+      },
+      timeOffset: "08:30:00"
+    };
+    console.log("test");
+    var params = new URLSearchParams(window.location.search);
+    var parentElemId = params.get("parentElemId");
+    var incomingOptions = {};
+    if (parentElemId) {
+      var parentElem = window.parent.document.getElementById(parentElemId)
+      var incomingOptions = parentElem.md.opts.iframeOptions || {};
+      console.log(incomingOptions.lineColors);
+
+    }
+    const mergedOptions = KvLib.deepMerge(defaultOptions, incomingOptions);
+    if (!incomingOptions.dataSetNames && incomingOptions.dataSets && KvLib.isPlainObject(incomingOptions.dataSets)) {
+      mergedOptions.dataSetNames = Object.keys(incomingOptions.dataSets);
+    }
+    renderSignalLineChart(mergedOptions);
+
+
+  </script>
+</body>
+
+</html>

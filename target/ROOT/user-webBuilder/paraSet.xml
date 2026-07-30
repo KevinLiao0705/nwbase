@@ -1,0 +1,23 @@
+#[testStr] <資料類型>
+#[testByte] <12>
+#[testShort] <34>
+#[testInt] <56>
+#[testLong] <78>
+#[testFloat] <12.3>
+#[testDouble] <12.34>
+#[testChar] <b>
+#[testBoolean] <true>
+#[testIntA] <1,2,3,4>
+#[testStrA] <ab,cd,ef,xx>
+#[testIntA~2] <3>
+#[testStrA~2] <ef>
+
+
+[uart0_port] <COM1>
+[uart0_boudrate] <115200>
+[uart0_parity] <None>
+[uart0_stopBit] <1>
+[uart0_dataBit] <8>
+
+
+

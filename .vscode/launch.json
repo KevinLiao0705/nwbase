@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Debug Servlet App",
+            "request": "launch",
+            "mainClass": "com.example.App",
+            "projectName": "simple-servlet-app",
+            "cwd": "${workspaceFolder}",
+            "vmArgs": "-Dserver.port=8080"
+        }
+    ]
+}

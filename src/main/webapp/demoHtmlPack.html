@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo HTML Pack</title>
+  <style>
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #f5f6f8;
+    }
+
+    #chartContainer {
+      position: fixed;
+      position: absolute;
+      inset: 0;
+      border: 0;
+    }
+
+    #chartContainer iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div id="chartContainer">
+    <iframe id="chartFrame" src="echarts-class-demo.html" title="ECharts Class Demo"></iframe>
+  </div>
+
+  <script>
+    const chartFrame = document.getElementById("chartFrame");
+    const callbackType = "SignalLineChartCallback";
+
+    const signalLineChartOptions = {
+      title: "SignalLineChart From Parent PageXXX",
+      memoInformation: [
+        "options transferred by postMessage",
+        "you can override this object in demoHtmlPack.html"
+      ],
+      memoInformationShowFlag: true,
+      chartBackgroundColor: "#eef6ff",
+      lineColors: {
+        dataSetName1: "#2563eb",
+        dataSetName2: "#16a34a",
+        dataSetName3: "#dc2626"
+      },
+      timeOffset: "09:00:00"
+    };
+
+    function postSignalLineChartOptions(options) {
+      if (!chartFrame || !chartFrame.contentWindow)
+      return;
+        
+      // 將圖表設定透過 postMessage 傳送到 iframe 子頁
+      chartFrame.contentWindow.postMessage(
+        {
+          type: "reloadOptions",
+          parentElemId: "chartContainer", // 傳遞父頁元素 ID
+          options: options
+        },
+        "*"
+      );
+    }
+
+    function isAllowedMessageOrigin(origin) {
+      return origin === window.location.origin || origin === "null" || (origin && origin.startsWith("file://"));
+    }
+
+    window.addEventListener("message", function (event) {
+      // 驗證訊息來源是否可信，避免處理未知來源事件
+      if (!isAllowedMessageOrigin(event.origin))
+        return;
+
+      const message = event.data;
+      if (!message || message.type !== callbackType)
+        return;
+
+      window.lastSignalLineChartCallback = message.payload || {};
+      console.log("SignalLineChart callback:", window.lastSignalLineChartCallback);
+    });
+
+    chartFrame.addEventListener("load", function () {
+      postSignalLineChartOptions(signalLineChartOptions);
+    });
+
+    // Expose helper for manual testing from browser console.
+    window.postSignalLineChartOptions = postSignalLineChartOptions;
+  </script>
+</body>
+</html>

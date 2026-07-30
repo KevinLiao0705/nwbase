@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Process Instructure - root.html</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --line: #98a2b3;
+      --text: #1f2937;
+      --muted: #475467;
+      --accent: #0f766e;
+      --accent2: #155eef;
+      --warn: #b42318;
+      --shadow: 0 6px 18px rgba(16, 24, 40, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 28px;
+      background: linear-gradient(180deg, #f6f8fb 0%, #edf2f7 100%);
+      color: var(--text);
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
+      color: #0b3b6e;
+    }
+
+    p.subtitle {
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .flow {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 1100px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 56px 1fr;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid #d0d5dd;
+      border-left: 6px solid var(--accent2);
+      border-radius: 12px;
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .card h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+      color: #0f172a;
+    }
+
+    .card p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #334155;
+    }
+
+    .card small {
+      display: block;
+      margin-top: 6px;
+      color: #667085;
+      font-size: 12px;
+    }
+
+    .arrow {
+      text-align: center;
+      color: var(--line);
+      font-size: 30px;
+      font-weight: 700;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      max-width: 1100px;
+    }
+
+    .card.server {
+      border-left-color: var(--accent);
+    }
+
+    .card.back {
+      border-left-color: var(--warn);
+    }
+
+    .note {
+      margin-top: 18px;
+      max-width: 1100px;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: #7c2d12;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    code {
+      background: #eff4ff;
+      border: 1px solid #dbe4ff;
+      border-radius: 5px;
+      padding: 1px 5px;
+      font-size: 12px;
+      color: #1d4ed8;
+    }
+
+    .act-wrap {
+      margin-top: 16px;
+      max-width: 1100px;
+    }
+
+    .act-wrap h2 {
+      margin: 0 0 10px;
+      font-size: 22px;
+      color: #0f2c5a;
+    }
+
+    .act-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(280px, 1fr));
+      gap: 10px;
+    }
+
+    .act-card {
+      background: #ffffff;
+      border: 1px solid #d9e2f2;
+      border-left: 6px solid #2563eb;
+      border-radius: 10px;
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .act-card h3 {
+      margin: 0 0 6px;
+      font-size: 15px;
+      color: #0f172a;
+    }
+
+    .act-card p {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #334155;
+    }
+
+    @media (max-width: 860px) {
+      .row {
+        grid-template-columns: 1fr;
+      }
+      .arrow {
+        transform: rotate(90deg);
+      }
+      .split {
+        grid-template-columns: 1fr;
+      }
+      .act-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Process Instructure (From root.html)</h1>
+  <p class="subtitle">Trace result based on root.html, MySystem.js, Server.js, App.java, and HelloServlet.java.</p>
+
+  <section class="flow">
+    <div class="row">
+      <div class="card">
+        <h3>1) Browser loads root.html</h3>
+        <p>HTML loads core scripts: jQuery, GlobalRes.js, MySystem.js, Server.js, Block.js, and other UI modules.</p>
+        <small>Entry: <code>root.html</code></small>
+      </div>
+      <div class="arrow">&#8594;</div>
+      <div class="card">
+        <h3>2) onLoad() runs</h3>
+        <p>Mouse tracking is attached to <code>#rootBody</code>, then <code>sys.indexLoaded()</code> is called.</p>
+        <small>Code path: root.html inline script</small>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="card">
+        <h3>3) System bootstrap</h3>
+        <p><code>sys.indexLoaded()</code> sets root style and starts animation timer with <code>ani.setTimer()</code>.</p>
+        <small>Code path: <code>MySystem.indexLoaded()</code></small>
+      </div>
+      <div class="arrow">&#8594;</div>
+      <div class="card">
+        <h3>4) Periodic UI lifecycle</h3>
+        <p>Timer drives repaint/check loop, watches model updates, and maintains page state.</p>
+        <small>Code path: MySystem + Animate + Block</small>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="card">
+        <h3>5) User action creates command JSON</h3>
+        <p>Features like login/save build command payload with <code>act</code>, <code>type</code>, <code>retOpts</code>, and <code>opts</code>.</p>
+        <small>Code path: <code>Server.serverLogin()</code>, <code>Server.saveStringToFile()</code>, ...</small>
+      </div>
+      <div class="arrow">&#8594;</div>
+      <div class="card">
+        <h3>6) AJAX call to backend</h3>
+        <p><code>Server.callServer()</code> sends POST JSON to <code>/hello</code> with <code>application/json;charset=utf-8</code>.</p>
+        <small>Code path: <code>Server.callServer()</code></small>
+      </div>
+    </div>
+  </section>
+
+  <section class="split" style="margin-top: 12px;">
+    <div class="card server">
+      <h3>7) Embedded Tomcat receives request</h3>
+      <p><code>App.java</code> manually maps servlet name <code>helloServlet</code> to URL <code>/hello</code> using:</p>
+      <p><code>context.addServletMappingDecoded("/hello", "helloServlet")</code></p>
+      <small>Runtime server: Embedded Tomcat in App.main()</small>
+    </div>
+
+    <div class="card server">
+      <h3>8) HelloServlet processes command</h3>
+      <p><code>doPost()</code> reads request body, parses JSON, validates <code>type=command</code>, then dispatches business logic via <code>anaJo(...)</code>.</p>
+      <small>Code path: <code>HelloServlet.doPost()</code></small>
+    </div>
+  </section>
+
+  <section class="split" style="margin-top: 12px;">
+    <div class="card back">
+      <h3>9) JSON response is returned</h3>
+      <p>Servlet writes JSON response with status/message/retOpts back to browser.</p>
+      <small>Header: <code>application/json;charset=utf-8</code></small>
+    </div>
+
+    <div class="card back">
+      <h3>10) Frontend callback updates UI</h3>
+      <p><code>serverBackOk()</code> reads <code>retOpts.responseType</code>/<code>responseAction</code> and triggers dialogs, messages, callbacks, and view updates.</p>
+      <small>Code path: <code>Server.serverBackOk()</code></small>
+    </div>
+  </section>
+
+  <section class="act-wrap">
+    <h2>HelloServlet act Branch Details</h2>
+    <div class="act-grid">
+      <div class="act-card">
+        <h3>act = login</h3>
+        <p>Validates <code>systemName</code>/<code>userName</code>/<code>password</code>, loads system/user/paraSet files, verifies account, and returns userSet + paraSet + webIp.</p>
+      </div>
+      <div class="act-card">
+        <h3>act = readFile</h3>
+        <p>Reads file by <code>opts.fileName</code> (under web root) and returns <code>opts.fileContent</code>.</p>
+      </div>
+      <div class="act-card">
+        <h3>act = saveStringToFile</h3>
+        <p>Writes <code>opts.content</code> to target file, supports paraSet path remap via systemName, refreshes para map when paraSet is updated.</p>
+      </div>
+      <div class="act-card">
+        <h3>act = writeImageFile</h3>
+        <p>Parses image JSON payload (width/height/data), converts RGBA array, and writes PNG via <code>ImageHandle.createBmpFile</code>.</p>
+      </div>
+      <div class="act-card">
+        <h3>act = sonprg</h3>
+        <p>Reserved sub-program branch (e.g., Ics). Current code keeps this path as placeholder/commented implementation.</p>
+      </div>
+      <div class="act-card">
+        <h3>act = zipDir</h3>
+        <p>Zips a directory into target archive by calling <code>Lib.zipDir(dirName, zipName)</code>.</p>
+      </div>
+      <div class="act-card">
+        <h3>act = copyFile</h3>
+        <p>Checks source/destination state and overwrite policy, then copies file with <code>Lib.copyFile</code>.</p>
+      </div>
+      <div class="act-card">
+        <h3>act = testServerResponse</h3>
+        <p>Simple connectivity/test branch; returns test response message with opts.</p>
+      </div>
+      <div class="act-card">
+        <h3>act = readFileNames</h3>
+        <p>Reads file names in a directory by compare patterns and returns array string in <code>opts.value</code>.</p>
+      </div>
+      <div class="act-card">
+        <h3>act = loadUserParaMap</h3>
+        <p>Loads user parameter map for specified user and stores result in global <code>GB.userParaMap</code>.</p>
+      </div>
+      <div class="act-card">
+        <h3>act = readFilexxx</h3>
+        <p>Legacy read branch, reads file content and optionally sets <code>outName</code> in response opts.</p>
+      </div>
+      <div class="act-card">
+        <h3>act = deleteFilesInDir</h3>
+        <p>Deletes specified file list under target directory and returns actually deleted names.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="note">
+    Important routing note: in this project runtime, backend endpoint is <code>/hello</code> (from App.java mapping). Calling <code>/helloServlet</code> may return 404 unless separately mapped by container scanning/config.
+  </div>
+</body>
+</html>

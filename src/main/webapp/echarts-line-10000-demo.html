@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ECharts 10,000 筆折線圖 Demo</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #dbe3ef;
+      --accent: #0ea5e9;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(14, 165, 233, 0.12), transparent 35%),
+        radial-gradient(circle at 90% 10%, rgba(16, 185, 129, 0.10), transparent 40%),
+        var(--bg);
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.10);
+      padding: 16px;
+    }
+
+    .head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: 1.2rem;
+      margin: 0;
+      letter-spacing: 0.02em;
+    }
+
+    .desc {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .tips {
+      font-size: 0.85rem;
+      color: var(--muted);
+      background: #f8fafc;
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+    }
+
+    #chart {
+      width: 100%;
+      height: 680px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    @media (max-width: 900px) {
+      #chart { height: 520px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <h1>10,000 筆 0~100 折線圖</h1>
+        <p class="desc">支援放大、縮小、平移，含滑桿與滑鼠互動。</p>
+      </div>
+      <div class="tips">
+        滾輪：縮放 | 拖曳圖表：平移 | 右上角工具列可重置
+      </div>
+    </div>
+    <div id="chart"></div>
+  </div>
+
+  <script>
+    // 產生 10,000 筆 0~100 的資料（可重現）
+    function mulberry32(seed) {
+      return function () {
+        let t = (seed += 0x6d2b79f5);
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+
+    function generateData(count) {
+      const rand = mulberry32(20260627);
+      const arr = new Array(count);
+      for (let i = 0; i < count; i++) {
+        // 0~100（保留 2 位小數）
+        const v = +(rand() * 100).toFixed(2);
+        arr[i] = [i, v];
+      }
+      return arr;
+    }
+
+    const totalPoints = 10000;
+    const data = generateData(totalPoints);
+
+    const chart = echarts.init(document.getElementById('chart'));
+
+    const option = {
+      animation: false,
+      backgroundColor: '#ffffff',
+      title: {
+        text: 'ECharts Line (10,000 points)',
+        left: 8,
+        top: 8,
+        textStyle: {
+          fontSize: 14,
+          fontWeight: 600,
+          color: '#1f2937'
+        }
+      },
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: { type: 'line' },
+        valueFormatter: function (val) {
+          return Number(val).toFixed(2);
+        }
+      },
+      toolbox: {
+        right: 8,
+        top: 6,
+        feature: {
+          dataZoom: { yAxisIndex: 'none' },
+          restore: {},
+          saveAsImage: {}
+        }
+      },
+      grid: {
+        left: 56,
+        right: 22,
+        top: 52,
+        bottom: 72
+      },
+      xAxis: {
+        type: 'value',
+        name: 'Index',
+        min: 0,
+        max: totalPoints - 1,
+        axisLine: { lineStyle: { color: '#64748b' } },
+        axisLabel: { color: '#334155' },
+        splitLine: { lineStyle: { color: 'rgba(148, 163, 184, 0.18)' } }
+      },
+      yAxis: {
+        type: 'value',
+        name: 'Value',
+        min: 0,
+        max: 100,
+        axisLine: { lineStyle: { color: '#64748b' } },
+        axisLabel: { color: '#334155' },
+        splitLine: { lineStyle: { color: 'rgba(148, 163, 184, 0.18)' } }
+      },
+      // 兩種 dataZoom：
+      // 1) inside: 滾輪縮放 + 拖曳平移
+      // 2) slider: 底部控制條
+      dataZoom: [
+        {
+          type: 'inside',
+          xAxisIndex: 0,
+          filterMode: 'none',
+          zoomOnMouseWheel: true,
+          moveOnMouseMove: true,
+          moveOnMouseWheel: false,
+          preventDefaultMouseMove: false
+        },
+        {
+          type: 'slider',
+          xAxisIndex: 0,
+          filterMode: 'none',
+          bottom: 20,
+          height: 24,
+          borderColor: '#cbd5e1',
+          fillerColor: 'rgba(14, 165, 233, 0.18)',
+          handleStyle: {
+            color: '#0ea5e9',
+            borderColor: '#0369a1'
+          }
+        }
+      ],
+      series: [
+        {
+          name: 'Random 0~100',
+          type: 'line',
+          data: data,
+          showSymbol: false,
+          symbol: 'none',
+          sampling: 'lttb',
+          large: true,
+          largeThreshold: 2000,
+          progressive: 3000,
+          progressiveThreshold: 10000,
+          lineStyle: {
+            width: 1.5,
+            color: '#0ea5e9'
+          },
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: 'rgba(14, 165, 233, 0.22)' },
+              { offset: 1, color: 'rgba(14, 165, 233, 0.02)' }
+            ])
+          },
+          emphasis: {
+            focus: 'series'
+          }
+        }
+      ]
+    };
+
+    chart.setOption(option);
+
+    window.addEventListener('resize', function () {
+      chart.resize();
+    });
+  </script>
+</body>
+</html>

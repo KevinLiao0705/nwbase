@@ -1,0 +1,162 @@
+2026-06-06 11:11:00 INFO  Root:91 - Web Base Program Start
+2026-06-06 11:11:01 INFO  Root:265 - readDatabaseToPara !!!
+2026-06-06 11:11:01 INFO  Root:297 - editNewDb Error !!!
+2026-06-06 11:18:36 INFO  Root:91 - Web Base Program Start
+2026-06-06 11:22:41 INFO  Root:265 - readDatabaseToPara !!!
+2026-06-06 11:22:45 INFO  Root:297 - editNewDb Error !!!
+2026-06-06 11:24:11 INFO  Root:91 - Web Base Program Start
+2026-06-06 11:24:20 INFO  Root:265 - readDatabaseToPara !!!
+2026-06-06 11:25:46 INFO  Root:297 - editNewDb Error !!!
+2026-06-06 11:28:29 INFO  Root:92 - Web Base Program Start
+2026-06-06 11:28:29 INFO  Root:245 - Connect Database Error !!!
+2026-06-06 11:28:29 INFO  Root:245 - Connect Database Error !!!
+2026-06-06 11:28:29 INFO  Root:276 - readDatabaseToPara !!!
+java.lang.NullPointerException: null
+	at com.example.Root.readDatabaseToPara(Root.java:261) [classes/:?]
+	at com.example.Root.<init>(Root.java:98) [classes/:?]
+	at org.apache.jsp.index_jsp._jspService(index_jsp.java:164) [ROOT/:?]
+	at org.apache.jasper.runtime.HttpJspBase.service(HttpJspBase.java:62) [tomcat-embed-jasper-10.1.55.jar:10.1.55]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:614) [jakarta.servlet-api-6.0.0.jar:6.0.0]
+	at org.apache.jasper.servlet.JspServletWrapper.service(JspServletWrapper.java:428) [tomcat-embed-jasper-10.1.55.jar:10.1.55]
+	at org.apache.jasper.servlet.JspServlet.serviceJspFile(JspServlet.java:350) [tomcat-embed-jasper-10.1.55.jar:10.1.55]
+	at org.apache.jasper.servlet.JspServlet.service(JspServlet.java:301) [tomcat-embed-jasper-10.1.55.jar:10.1.55]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:614) [jakarta.servlet-api-6.0.0.jar:6.0.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:88) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:342) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:399) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:1272) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1797) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:973) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at java.base/java.lang.Thread.run(Thread.java:835) [?:?]
+2026-06-06 11:28:30 INFO  Root:245 - Connect Database Error !!!
+2026-06-06 11:28:30 INFO  Root:303 - editNewDb Error !!!
+java.lang.NullPointerException: null
+	at com.example.Root.editNewDb(Root.java:284) [classes/:?]
+	at com.example.Root.netInf(Root.java:195) [classes/:?]
+	at com.example.Root.<init>(Root.java:99) [classes/:?]
+	at org.apache.jsp.index_jsp._jspService(index_jsp.java:164) [ROOT/:?]
+	at org.apache.jasper.runtime.HttpJspBase.service(HttpJspBase.java:62) [tomcat-embed-jasper-10.1.55.jar:10.1.55]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:614) [jakarta.servlet-api-6.0.0.jar:6.0.0]
+	at org.apache.jasper.servlet.JspServletWrapper.service(JspServletWrapper.java:428) [tomcat-embed-jasper-10.1.55.jar:10.1.55]
+	at org.apache.jasper.servlet.JspServlet.serviceJspFile(JspServlet.java:350) [tomcat-embed-jasper-10.1.55.jar:10.1.55]
+	at org.apache.jasper.servlet.JspServlet.service(JspServlet.java:301) [tomcat-embed-jasper-10.1.55.jar:10.1.55]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:614) [jakarta.servlet-api-6.0.0.jar:6.0.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:88) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:342) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:399) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:1272) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1797) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:973) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at java.base/java.lang.Thread.run(Thread.java:835) [?:?]
+2026-06-06 11:29:30 INFO  Root:92 - Web Base Program Start
+2026-06-06 11:29:30 INFO  Root:245 - Connect Database Error !!!
+2026-06-06 11:29:30 INFO  Root:245 - Connect Database Error !!!
+2026-06-06 11:29:30 INFO  Root:276 - readDatabaseToPara !!!
+java.lang.NullPointerException: null
+	at com.example.Root.readDatabaseToPara(Root.java:261) [classes/:?]
+	at com.example.Root.<init>(Root.java:98) [classes/:?]
+	at org.apache.jsp.index_jsp._jspService(index_jsp.java:164) [ROOT/:?]
+	at org.apache.jasper.runtime.HttpJspBase.service(HttpJspBase.java:62) [tomcat-embed-jasper-10.1.55.jar:10.1.55]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:614) [jakarta.servlet-api-6.0.0.jar:6.0.0]
+	at org.apache.jasper.servlet.JspServletWrapper.service(JspServletWrapper.java:428) [tomcat-embed-jasper-10.1.55.jar:10.1.55]
+	at org.apache.jasper.servlet.JspServlet.serviceJspFile(JspServlet.java:350) [tomcat-embed-jasper-10.1.55.jar:10.1.55]
+	at org.apache.jasper.servlet.JspServlet.service(JspServlet.java:301) [tomcat-embed-jasper-10.1.55.jar:10.1.55]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:614) [jakarta.servlet-api-6.0.0.jar:6.0.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:88) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:342) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:399) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:1272) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1797) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:973) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at java.base/java.lang.Thread.run(Thread.java:835) [?:?]
+2026-06-06 11:29:31 INFO  Root:245 - Connect Database Error !!!
+2026-06-06 11:29:31 INFO  Root:303 - editNewDb Error !!!
+java.lang.NullPointerException: null
+	at com.example.Root.editNewDb(Root.java:284) [classes/:?]
+	at com.example.Root.netInf(Root.java:195) [classes/:?]
+	at com.example.Root.<init>(Root.java:99) [classes/:?]
+	at org.apache.jsp.index_jsp._jspService(index_jsp.java:164) [ROOT/:?]
+	at org.apache.jasper.runtime.HttpJspBase.service(HttpJspBase.java:62) [tomcat-embed-jasper-10.1.55.jar:10.1.55]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:614) [jakarta.servlet-api-6.0.0.jar:6.0.0]
+	at org.apache.jasper.servlet.JspServletWrapper.service(JspServletWrapper.java:428) [tomcat-embed-jasper-10.1.55.jar:10.1.55]
+	at org.apache.jasper.servlet.JspServlet.serviceJspFile(JspServlet.java:350) [tomcat-embed-jasper-10.1.55.jar:10.1.55]
+	at org.apache.jasper.servlet.JspServlet.service(JspServlet.java:301) [tomcat-embed-jasper-10.1.55.jar:10.1.55]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:614) [jakarta.servlet-api-6.0.0.jar:6.0.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:88) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:342) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:399) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:1272) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1797) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:973) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) [tomcat-embed-core-10.1.55.jar:10.1.55]
+	at java.base/java.lang.Thread.run(Thread.java:835) [?:?]
+2026-06-06 11:33:55 INFO  Root:92 - Web Base Program Start
+2026-06-06 11:35:57 INFO  Root:92 - Web Base Program Start
+2026-06-06 11:52:20 INFO  Root:94 - Web Base Program Start
+2026-06-06 12:16:29 INFO  Root:94 - Web Base Program Start
+2026-06-06 14:23:57 INFO  Root:94 - Web Base Program Start
+2026-06-06 14:27:31 INFO  Root:94 - Web Base Program Start
+2026-06-08 23:08:22 INFO  Root:94 - Web Base Program Start
+2026-06-10 22:36:37 INFO  Root:94 - Web Base Program Start
+2026-06-10 22:39:26 INFO  Root:94 - Web Base Program Start
+2026-06-11 21:19:38 INFO  Root:94 - Web Base Program Start
+2026-06-11 21:21:13 INFO  Root:94 - Web Base Program Start
+2026-06-19 09:48:39 INFO  Root:94 - Web Base Program Start
+2026-06-21 09:17:02 INFO  Root:94 - Web Base Program Start
+2026-06-21 09:24:27 INFO  Root:94 - Web Base Program Start
+2026-06-22 22:01:35 INFO  Root:94 - Web Base Program Start
+2026-06-22 22:25:14 INFO  Root:94 - Web Base Program Start
+2026-06-22 22:52:52 INFO  Root:94 - Web Base Program Start
+2026-06-22 22:53:48 INFO  Root:94 - Web Base Program Start
+2026-06-27 10:22:33 INFO  Root:94 - Web Base Program Start
+2026-06-29 23:16:20 INFO  Root:94 - Web Base Program Start
+2026-07-04 11:10:06 INFO  Root:94 - Web Base Program Start
+2026-07-04 21:01:58 INFO  Root:94 - Web Base Program Start
+2026-07-04 22:51:29 INFO  Root:94 - Web Base Program Start
+2026-07-04 22:53:35 INFO  Root:94 - Web Base Program Start
+2026-07-16 22:48:20 INFO  Root:94 - Web Base Program Start
+2026-07-17 22:11:16 INFO  Root:94 - Web Base Program Start
+2026-07-25 14:57:17 INFO  Root:94 - Web Base Program Start

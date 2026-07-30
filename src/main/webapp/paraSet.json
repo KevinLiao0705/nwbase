@@ -1,0 +1,64 @@
+{
+    "dsc~dataType": "int,float,str,intStr,floatStr,intA,floatA",
+    "version": "1.0",
+    "dsc~version": {
+        "getType": "floatStr"
+    },
+    "paraSetPassword": "1234",
+    "uart0Port": 7,
+    "dsc~uart0Port": {
+        "getType": "nature",
+        "max": 10
+    },
+    "uart0Boudrate": 115200,
+    "dsc~uart0Boudrate": {
+        "getType": "intEnum",
+        "enum": [
+            460800,
+            115200,
+            57600,
+            38400,
+            19200,
+            9600
+        ]
+    },
+    "uart0Parity": "None",
+    "dsc~uart0Parity": {
+        "getType": "strEnum",
+        "enum": [
+            "none",
+            "even",
+            "odd"
+        ]
+    },
+    "masterCtrPulseSource": 0,
+    "dsc~masterCtrPulseSource": {
+        "getType": "buttonRadio",
+        "title": "主控脈波來源",
+        "enum": [
+            "SP同步",
+            "本機模擬"
+        ]
+    },
+    "masterToSub1CommType": 0,
+    "dsc~masterToSub1CommType": {
+        "getType": "buttonRadio",
+        "title": "主控與副控1通信方式",
+        "enum": [
+            "光纖",
+            "無線",
+            "自動"
+        ]
+    },
+    "subCtr2PulseSource": 0,
+    "dsc~subCtr2PulseSource": {
+        "getType": "buttonRadio",
+        "title": "主控與副控2通信方式",
+        "enum": [
+            "光纖",
+            "無線",
+            "自動"
+        ]
+    },
+    "dsc~end": 0
+}
