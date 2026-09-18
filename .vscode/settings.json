@@ -1,4 +1,12 @@
 {
     "java.configuration.updateBuildConfiguration": "automatic",
-    "java.debug.settings.onBuildFailure": "proceed"
+    "java.debug.settings.onBuildFailure": "proceed",
+    "java.project.sourcePaths": [
+        "src/main/java"
+    ],
+    "java.import.exclusions": [
+        "**/java_backup/**",
+        "**/target/**",
+        "**/node_modules/**"
+    ]
 }

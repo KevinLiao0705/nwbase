@@ -1,0 +1,1 @@
+java -jar ./target/nwbase.jar --port 80

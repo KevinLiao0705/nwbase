@@ -2,21 +2,45 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Maven: clean package",
+      "label": "compile server.java",
       "type": "shell",
-      "command": "mvn",
+      "command": "javac",
       "args": [
-        "clean",
-        "package"
+        "--release",
+        "11",
+        "-g",
+        "-encoding",
+        "UTF-8",
+        "-d",
+        "target/classes",
+        "-cp",
+        ".libs/sqlite-jdbc-3.34.0.jar",
+        "src/main/java/server.java"
       ],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
       "group": {
         "kind": "build",
         "isDefault": true
       },
-      "problemMatcher": []
+      "problemMatcher": ["$javac"]
+    },
+    {
+      "label": "clean and package",
+      "type": "shell",
+      "command": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/scripts/package.ps1"
+      ],
+      "group": "build",
+      "problemMatcher": ["$javac"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
     }
   ]
 }

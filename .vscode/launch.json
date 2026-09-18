@@ -2,13 +2,31 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Debug server.java",
             "type": "java",
-            "name": "Debug Servlet App",
             "request": "launch",
-            "mainClass": "com.example.App",
-            "projectName": "simple-servlet-app",
+            "mainClass": "server",
+            "filePath": "${workspaceFolder}/src/main/java/server.java",
+            "classPaths": [
+                "${workspaceFolder}/target/classes",
+                "${workspaceFolder}/.libs/sqlite-jdbc-3.34.0.jar"
+            ],
+            "preLaunchTask": "compile server.java",
             "cwd": "${workspaceFolder}",
-            "vmArgs": "-Dserver.port=8080"
+            "console": "integratedTerminal",
+            "timeout": 60000,
+            "sourcePaths": [
+                "${workspaceFolder}/src/main/java"
+            ],
+            "stepFilters": {
+                "skipClasses": [
+                    "$JDK",
+                    "junit.*"
+                ],
+                "skipSynthetics": true,
+                "skipStaticInitializers": true,
+                "skipConstructors": false
+            }
         }
     ]
 }
