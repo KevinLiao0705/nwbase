@@ -667,6 +667,17 @@ class DummyTargetMaster {
                         opts.setNames.push("ctr1AttenuatorMin");
                         opts.setNames.push("errPulseWidthMax");
                         opts.setNames.push("errPulseDutyMax");
+                        opts.setNames.push("ctr1SspaPowerV32AllCurFilter");
+                        opts.setNames.push("ctr1SspaPowerMaxCurrentFilter");
+                        opts.setNames.push("vgTimeDelay");
+                        opts.setNames.push("sub1ChFiberDelay");
+                        opts.setNames.push("sub1ChRfDelay");
+                        opts.setNames.push("subChDelay");
+                        opts.setNames.push("ctrChDelay");
+                        opts.setNames.push("drvChDelay");
+                        opts.setNames.push("meterChDelay");
+
+
 
                     }
                 }
@@ -2366,6 +2377,8 @@ class SubRadarPane {
         var wa = md.stas.ledStatusA = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         var wb = md.stas.buttonInxA = [-1, -1, -1, -1, -1, -1, 0, 0, 0, 0];
         var wc = md.stas.buttonColorA = ["#888", "#888", "#888", "#888"];
+        var wd = md.stas.buttonDisableA = [0,0,0,0];
+
         var rd = gr.radarData;
         if (rd.webReturnCmd) {
             if (rd.webReturnCmd !== 0) {
@@ -2442,6 +2455,13 @@ class SubRadarPane {
 
 
 
+        var remoteEnable = (gr.radarData.systemStatus1 >> 30) & 1;
+        if(!remoteEnable){
+            wd[0]=1;
+            wd[1]=1;
+            wd[2]=1;
+            wd[3]=1;
+        }    
 
 
 
@@ -2760,12 +2780,14 @@ class SubRadarPane {
                 setOpts.actViewNone_f = 1;
             }
             var regName = "self.fatherMd.fatherMd.fatherMd.stas.buttonColorA";
+            var regName1 = "self.fatherMd.fatherMd.fatherMd.stas.buttonDisableA";
             if (i === inx++) {
                 var setOpts = opts.setOpts = sopt.getOptsPara("button");
                 opts.title = "放大器電源";
                 setOpts.enum = ["放大器電源"];
                 var watchDatas = setOpts.watchDatas = [];
                 watchDatas.push(["directReg", regName2 + "#0", "baseColor", 1]);
+                watchDatas.push(["directReg", regName1 + "#0", "disable_f", 1]);
 
 
             }
@@ -2775,6 +2797,7 @@ class SubRadarPane {
                 setOpts.enum = ["放大器致能"];
                 var watchDatas = setOpts.watchDatas = [];
                 watchDatas.push(["directReg", regName2 + "#1", "baseColor", 1]);
+                watchDatas.push(["directReg", regName1 + "#1", "disable_f", 1]);
             }
             if (i === inx++) {
                 var setOpts = opts.setOpts = sopt.getOptsPara("button");
@@ -2782,6 +2805,7 @@ class SubRadarPane {
                 setOpts.enum = ["脈波輸出"];
                 var watchDatas = setOpts.watchDatas = [];
                 watchDatas.push(["directReg", regName2 + "#2", "baseColor", 1]);
+                watchDatas.push(["directReg", regName1 + "#2", "disable_f", 1]);
             }
             if (i === inx++) {
                 var setOpts = opts.setOpts = sopt.getOptsPara("button");
@@ -2789,6 +2813,7 @@ class SubRadarPane {
                 setOpts.enum = ["緊急停止"];
                 var watchDatas = setOpts.watchDatas = [];
                 watchDatas.push(["directReg", regName2 + "#3", "baseColor", 1]);
+                watchDatas.push(["directReg", regName1 + "#3", "disable_f", 1]);
             }
 
             setOpts.titleWidth = 0;
@@ -2881,6 +2906,7 @@ class SubRadarPane1 {
         var st = md.stas;
         var wb = md.stas.ledStatusA = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         var wc = md.stas.buttonColorA = ["#888", "#888", "#888", "#888"];
+        var wd = md.stas.buttonDisableA = [0,0,0,0];
         var preText = "ctr1";
 
         var sysStatus = gr.radarData.systemStatus0 & 3;
@@ -2899,6 +2925,7 @@ class SubRadarPane1 {
         var preRfIn = (gr.radarData.systemStatus0 >> 22) & 1;
         wb[1] = preRfIn;
         //=====================================
+        var remoteEnable = (gr.radarData.systemStatus1 >> 4) & 1;
         var enviErr = (gr.radarData.systemStatus1 >> 7) & 1;
         var powerOk = (gr.radarData.systemStatus1 >> 8) & 1;
         var moduleOk = (gr.radarData.systemStatus1 >> 9) & 1;
@@ -2944,6 +2971,13 @@ class SubRadarPane1 {
         var emergencyOn = (gr.radarData.systemStatus0 >> 26) & 1;
         if (emergencyOn)
             wc[3] = "#fcc";
+
+        if(remoteEnable){
+            wd[0]=1;
+            wd[1]=1;
+            wd[2]=1;
+            wd[3]=1;
+        }    
 
         mac.messageEditor(md);
     }
@@ -3275,12 +3309,14 @@ class SubRadarPane1 {
                 setOpts.fontSize = "0.4rh";
             }
             var regName = "self.fatherMd.fatherMd.fatherMd.stas.buttonColorA";
+            var regName1 = "self.fatherMd.fatherMd.fatherMd.stas.buttonDisableA";
             if (i === inx++) {
                 var setOpts = opts.setOpts = sopt.getOptsPara("button");
                 opts.title = "放大器電源";
                 setOpts.enum = ["放大器電源"];
                 var watchDatas = setOpts.watchDatas = [];
                 watchDatas.push(["directReg", regName + "#0", "baseColor", 1]);
+                watchDatas.push(["directReg", regName1 + "#0", "disable_f", 1]);
             }
             if (i === inx++) {
                 var setOpts = opts.setOpts = sopt.getOptsPara("button");
@@ -3288,6 +3324,8 @@ class SubRadarPane1 {
                 setOpts.enum = ["放大器致能"];
                 var watchDatas = setOpts.watchDatas = [];
                 watchDatas.push(["directReg", regName + "#1", "baseColor", 1]);
+                watchDatas.push(["directReg", regName1 + "#1", "disable_f", 1]);
+
             }
             if (i === inx++) {
                 var setOpts = opts.setOpts = sopt.getOptsPara("button");
@@ -3295,6 +3333,7 @@ class SubRadarPane1 {
                 setOpts.enum = ["脈波輸出"];
                 var watchDatas = setOpts.watchDatas = [];
                 watchDatas.push(["directReg", regName + "#2", "baseColor", 1]);
+                watchDatas.push(["directReg", regName1 + "#2", "disable_f", 1]);
             }
             if (i === inx++) {
                 var setOpts = opts.setOpts = sopt.getOptsPara("button");
@@ -3302,6 +3341,7 @@ class SubRadarPane1 {
                 setOpts.enum = ["緊急停止"];
                 var watchDatas = setOpts.watchDatas = [];
                 watchDatas.push(["directReg", regName + "#3", "baseColor", 1]);
+                watchDatas.push(["directReg", regName1 + "#3", "disable_f", 1]);
             }
             setOpts.titleWidth = 0;
             setOpts.baseColor = "#002";
@@ -7033,6 +7073,61 @@ class CtrSspaPowerStatus {
                 valueColor = "#f22";
             return [valueStr, valueColor, value];
         };
+
+        var iPtrLim = gr.paraSet["ctr1SspaPowerMaxCurrentFilter"];
+        if (!iPtrLim)
+            iPtrLim = 1;
+
+        if (!gr.radarData.i32BufAA) {
+            gr.radarData.i32BufAA = [];
+            for (var i = 0; i < 36; i++) {
+                gr.radarData.i32BufAA[i] = [];
+                for (var j = 0; j < iPtrLim; j++)
+                    gr.radarData.i32BufAA[i].push(0);
+
+            }
+        }
+        if (!gr.radarData.i50BufAA) {
+            gr.radarData.i50BufAA = [];
+            for (var i = 0; i < 36; i++) {
+                gr.radarData.i50BufAA[i] = [];
+                for (var j = 0; j < iPtrLim; j++)
+                    gr.radarData.i50BufAA[i].push(0);
+
+            }
+        }
+        if (!gr.radarData.iPtrInx)
+            gr.radarData.iPtrInx = 0;
+        for (var i = 0; i < 36; i++) {
+            gr.radarData.i32BufAA[i][gr.radarData.iPtrInx] = gr.radarData.sspaPowerV32iAA[i];
+            gr.radarData.i50BufAA[i][gr.radarData.iPtrInx] = gr.radarData.sspaPowerV50iAA[i];
+            //gr.radarData.i32BufAA[i][gr.radarData.iPtrInx] = Math.floor(Math.random() * (101));
+            //gr.radarData.i50BufAA[i][gr.radarData.iPtrInx] = Math.floor(Math.random() * (101));
+        }
+        gr.radarData.iPtrInx++;
+        if (gr.radarData.iPtrInx >= iPtrLim)
+            gr.radarData.iPtrInx = 0;
+
+        var i50Max = [];
+        var i32Max = [];
+
+        for (var i = 0; i < 36; i++) {
+            i32Max.push(0);
+            for (var j = 0; j < iPtrLim; j++) {
+                if (gr.radarData.i32BufAA[i][j] > i32Max[i])
+                    i32Max[i] = gr.radarData.i32BufAA[i][j];
+
+            }
+
+            i50Max.push(0);
+            for (var j = 0; j < iPtrLim; j++) {
+                if (gr.radarData.i50BufAA[i][j] > i50Max[i])
+                    i50Max[i] = gr.radarData.i50BufAA[i][j];
+            }
+
+
+        }
+
         for (var i = 0; i < 36; i++) {
             //0 existCheck, 1 faultLed, 2:v50enLed, 3:v32enLed, 4:v50v, 5:v50i, 6:v50i, 7:v32v, 8:v32i, 9:v32t  
             if (gr.radarData.sspaPowerV32tAA[i] > 1000)
@@ -7043,10 +7138,13 @@ class CtrSspaPowerStatus {
                 gr.radarData.sspaPowerV32vAA[i] = 0;
             var va = [0, "#ccc", 0, 0, 0, "---", "#eef", "---", "#eef", "---", "#eef", "---", "#eef", "---", "#eef", "---", "#eef"];
             va[0] = gr.paraSet[preText + "SspaPowerExistA"][i];
+
+            
             if (!(powerStatusA[i] & 1) || !va[0]) {//connect flag
                 watchAA.push(va);
                 continue;
             }
+                
             if (powerStatusA[i] & (1 << 4))
                 va[1] = "#cfc";
             if (powerStatusA[i] & (1 << 1))
@@ -7058,7 +7156,7 @@ class CtrSspaPowerStatus {
             var obj = prg(gr.radarData.sspaPowerV50vAA[i], "SspaPowerV50v", 1);
             va[5] = obj[0];
             va[6] = obj[1];
-            var obj = prg(gr.radarData.sspaPowerV50iAA[i], "SspaPowerV50i", 1);
+            var obj = prg(i50Max[i], "SspaPowerV50i", 1);
             va[7] = obj[0];
             va[8] = obj[1];
             var obj = prg(gr.radarData.sspaPowerV50tAA[i], "SspaPowerV50t", 0);
@@ -7069,7 +7167,7 @@ class CtrSspaPowerStatus {
             var obj = prg(gr.radarData.sspaPowerV32vAA[i], "SspaPowerV32v", 1);
             va[11] = obj[0];
             va[12] = obj[1];
-            var obj = prg(gr.radarData.sspaPowerV32iAA[i], "SspaPowerV32i", 1);
+            var obj = prg(i50Max[i], "SspaPowerV32i", 1);
             va[13] = obj[0];
             va[14] = obj[1];
             var obj = prg(gr.radarData.sspaPowerV32tAA[i], "SspaPowerV32t", 0);

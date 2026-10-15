@@ -1187,8 +1187,8 @@ class GB {
     public static String flyingEagleLinuxParaSet = "/home/kevin/flyingEagle/paraSet.json";
     public static String newTft15WinParaSet = "e:/kevin/myCode/webSet/newTft15Set/paraSet.json";
     public static String newTft15LinuxParaSet = "/home/pi/kevin/newTft15/paraSet.json";
-    public static String newTft6WinParaSet = "e:/kevin/myCode/webSet/newTft6Set/paraSet.json";
-    public static String newTft6LinuxParaSet = "/home/txa29/newA30Pc/paraSet.json";
+    public static String newTft6WinParaSet = "D:/kevinJosnPcSync/newA30PcSet/paraSet.json";
+    public static String newTft6LinuxParaSet = "/home/txa29/newA30PcSetExe/paraSet.json";
 
     public static int min_js_f = 0;
     public static String systemName = "";

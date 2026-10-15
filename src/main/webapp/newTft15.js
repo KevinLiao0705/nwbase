@@ -1788,7 +1788,7 @@ class NewTft6 {
             gr.syncData.errValA.push(0);
 
 
-        gr.socketRetPrgTbl["tick~react"] = function (retData) {
+        gr.socketRetPrgTbl["ret~tick"] = function (retData) {
             var syncData = retData.syncData;
             var keys = Object.keys(syncData);
             for (var i = 0; i < keys.length; i++) {
@@ -1806,10 +1806,17 @@ class NewTft6 {
             gr.syncDataRxed_f = 1;
             //console.log("sipphoneUiData");
         };
-        gr.socketRetPrgTbl["saveA109~react"] = function (retData) {
+        gr.socketRetPrgTbl["ret~saveA109"] = function (retData) {
             var opts = {};
-            opts.kvTexts = ["SAVE OK"];
-            box.okBox(opts);
+            opts.kvTexts = ["Waitting ........."];
+            opts.buttons=[];
+            box.mesBox(opts);
+
+            setTimeout(() => {
+                gr.mesBoxOn_f = 0;
+                MdaPopWin.popOff(2);
+            }, 3000);
+
         };
 
 

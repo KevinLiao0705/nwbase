@@ -1779,7 +1779,8 @@ class KvBox {
         var mesObj = mda.popObj(op.w, op.h, kvObj);
         var bobj = kvObj.blockRefs["esc"];
         gr.mesBoxOn_f = 1;
-        bobj.elems["base"].focus();
+        if (bobj)
+            bobj.elems["base"].focus();
 
 
     }
