@@ -6030,6 +6030,8 @@ class MdaButtons {
         opts.fontSize = "0.7rh";
         opts.xc = 1;
         opts.yc = 1;
+        opts.wButtonAlign = "center";
+        opts.hButtonAlign = "top";
         return opts;
     }
     subTypeOpts(opts) {
@@ -6081,15 +6083,16 @@ class MdaButtons {
             opts.xm = op.xm;
             opts.ew = op.iw;
             opts.ym = op.ym;
-
-            opts.wAlign = "center";
-            opts.hAlign = "top";
+            opts.wAlign = op.wButtonAlign;
+            opts.hAlign = op.hButtonAlign;
             opts.margin = op.margin;
             layouts[cname] = { name: cname, type: "Layout~Ly_base~array.sys0", opts: opts };
             lyMaps["buttonPanel"] = cname;
 
             for (var i = 0; i < op.buttons.length; i++) {
                 var cname = lyMaps["buttonPanel"] + "~" + i;
+                if(op.buttons[i]==null)    
+                    continue;
                 var opts = {};
                 opts.innerText = op.buttons[i];
                 opts.id = op.buttons[i];

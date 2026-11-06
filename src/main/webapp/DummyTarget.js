@@ -1194,8 +1194,8 @@ class DummyTargetMaster {
 
         var cname = lyMaps["mainBody"] + "~" + 1;
         var opts = {};
-        opts.buttons = ["自測", "佈署", "同步", "波形", "通話", "設定"];
-        opts.buttonIds = ["selfTest", "location", "sync", "wave", "call", "setting"];
+        opts.buttons = ["自測", "佈署", "同步", "波形", "電話", "設定", "關機"];
+        opts.buttonIds = ["selfTest", "location", "sync", "wave", "call", "setting", "systemClose"];
         opts.actionFunc = function (iobj) {
             console.log(iobj);
             if (iobj.buttonId === "location") {
@@ -1255,9 +1255,23 @@ class DummyTargetMaster {
                 return;
             }
 
+            if (iobj.buttonId === "systemClose") {
+                var opts = {};
+                opts.actionFunc = function (iobj) {
+                    console.log(iobj);
+                    if (iobj.kvObj.name === "ok") {
+                        gr.gbcs.command({ 'act': "powerDown" });
+                        return;
+                    }
+                };
+                opts.kvTexts = ["系統關機"];
+                box.checkBox(opts)
+            }
+
+
 
         };
-        opts.buttonAmt = 6;
+        opts.buttonAmt = 7;
         blocks[cname] = { name: "headButtons", type: "Model~MdaButtons~base.sys0", opts: opts };
         //==============================
         var cname = lyMaps["mainBody"] + "~" + 2;
@@ -1627,13 +1641,29 @@ class MasterRadarPane {
         var st = md.stas;
 
         st.radarStatus = [];
-
         /*
          SP發射機信號     0.0: 無信號, 0.1: 信號備便
          脈波來源       1.0: 主雷同步, 1.1: 本機脈波
          與副控1連線方式  2.0: 光纖, 2.1: 無線, 2.2: 自動 
          與副控2連線方式  2.0: 光纖, 2.1: 無線, 2.2: 自動 
          */
+        var rd = gr.radarData;         
+
+
+        var speechStatus=(rd.systemStatus0 >> 2) &1; 
+        speechStatus+=((rd.systemStatus0 >> 4) &1)*2; 
+
+        if(speechStatus==0)
+            md.stas.speechColor="#ccf";
+        if(speechStatus==1){//dial
+            md.stas.speechColor="#ffc";
+        }    
+        if(speechStatus==2){//ring
+            md.stas.speechColor="#f88";
+        }    
+        if(speechStatus==3)//connect
+            md.stas.speechColor="#cfc";
+
 
         var status = gr.radarData.systemStatus0 & 3;
         var ledInx = 0;
@@ -1816,7 +1846,7 @@ class MasterRadarPane {
         opts.yArr = [45, 90, 90, 0, 9999];
         opts.xyArr = [
             [9999],
-            ["0.5rw", 9999],
+            ["0.4rw", "0.4rw", 9999],
             ["0.33rw", "0.33rw", 9999],
             ["0.1rw", 9999],
             [9999]
@@ -1831,7 +1861,7 @@ class MasterRadarPane {
         blocks[cname] = { name: "basePanel", type: "Component~Cp_base~label.title", opts: opts };
         //==============================
         var preText = "mast";
-        for (var i = 0; i < 7; i++) {
+        for (var i = 0; i < 8; i++) {
             var cname = lyMaps["mainBody"] + "~" + lyInx++;
             var opts = {};
             opts.setOptss = [];
@@ -1849,7 +1879,22 @@ class MasterRadarPane {
                 var regName = "self.fatherMd.fatherMd.fatherMd.stas.radarStatus";
                 watchDatas.push(["directReg", regName + "#1", "backgroundInx", 1]);
             }
+
             if (i === 2) {
+                opts.innerText = "通話"
+                var watchReg = "self.fatherMd.stas.speechColor";
+                md.setInputWatch(opts, "directReg", watchReg, "baseColor", 1);
+                opts.actionFunc=function(iobj){
+                    console.log(iobj);
+                    gr.gbcs.command({ 'act': "speechAct" });
+                };
+
+                blocks[cname] = { name: "dialButton", type: "Component~Cp_base~button.sys0", opts: opts };
+                continue;
+            }
+
+
+            if (i === 3) {
                 var setOpts = opts.setOpts = sopt.getOptsPara("buttonSelect");
                 var para = sopt.getParaSetOpts({ paraSetName: "mastToSub1CommType", titleWidth: 0, titleFontSize: "0.5rh" });
                 opts.title = "主控與副控1連線方式";
@@ -1857,7 +1902,7 @@ class MasterRadarPane {
                 setOpts.value = para.value;
                 setOpts.id = "mastToSub1CommType";
             }
-            if (i === 3) {
+            if (i === 4) {
                 var setOpts = opts.setOpts = sopt.getOptsPara("buttonSelect");
                 var para = sopt.getParaSetOpts({ paraSetName: "mastToSub2CommType", titleWidth: 0, titleFontSize: "0.5rh" });
                 opts.title = "主控與副控2連線方式";
@@ -1865,7 +1910,7 @@ class MasterRadarPane {
                 setOpts.value = para.value;
                 setOpts.id = "mastToSub2CommType";
             }
-            if (i === 4) {
+            if (i === 5) {
                 var setOpts = opts.setOpts = sopt.getOptsPara("buttonSelect");
                 var para = sopt.getParaSetOpts({ paraSetName: "mastPulseSource", titleWidth: 0, titleFontSize: "0.5rh" });
                 opts.title = "脈波來源";
@@ -1874,7 +1919,7 @@ class MasterRadarPane {
                 setOpts.id = "mastPulseSource";
             }
 
-            if (i === 5) {
+            if (i === 6) {
                 continue;
                 var regName = "self.fatherMd.stas.radarStatus#2";
                 Block.setInputWatch(opts, "directReg", regName, "backgroundInx", 1);
@@ -1883,7 +1928,7 @@ class MasterRadarPane {
                 //===
             }
 
-            if (i === 6) {
+            if (i === 7) {
                 continue;
 
                 var setOpts = opts.setOpts = sopt.getOptsPara("buttonActs");
@@ -1995,6 +2040,7 @@ class MasterRadarPane {
         opts.ym = 10;
         opts.iw = 100;
         opts.baseColor = "#444";
+        opts.wButtonAlign = "center";
         opts.actionFunc = function (iobj) {
             console.log(iobj);
             if (iobj.buttonId === "upPage") {
@@ -2239,8 +2285,8 @@ class DummyTargetSub {
         //==============================
         var cname = lyMaps["mainBody"] + "~" + 1;
         var opts = {};
-        opts.buttons = ["自測", "佈署", "同步", "波形", "通話", "設定"];
-        opts.buttonIds = ["selfTest", "location", "sync", "wave", "call", "setting"];
+        opts.buttons = ["自測", "佈署", "同步", "波形", "電話", "設定", "關機"];
+        opts.buttonIds = ["selfTest", "location", "sync", "wave", "call", "setting", "systemClose"];
 
         opts.actionFunc = function (iobj) {
             console.log(iobj);
@@ -2303,10 +2349,22 @@ class DummyTargetSub {
                 return;
             }
 
+            if (iobj.buttonId === "systemClose") {
+                var opts = {};
+                opts.actionFunc = function (iobj) {
+                    console.log(iobj);
+                    if (iobj.kvObj.name === "ok") {
+                        gr.gbcs.command({ 'act': "powerDown" });
+                        return;
+                    }
+                };
+                opts.kvTexts = ["系統關機"];
+                box.checkBox(opts)
+            }
 
 
         };
-        opts.buttonAmt = 6;
+        opts.buttonAmt = 7;
         blocks[cname] = { name: "headButtons", type: "Model~MdaButtons~base.sys0", opts: opts };
         //==============================
         var cname = lyMaps["mainBody"] + "~" + 3;
@@ -2377,7 +2435,8 @@ class SubRadarPane {
         var wa = md.stas.ledStatusA = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         var wb = md.stas.buttonInxA = [-1, -1, -1, -1, -1, -1, 0, 0, 0, 0];
         var wc = md.stas.buttonColorA = ["#888", "#888", "#888", "#888"];
-        var wd = md.stas.buttonDisableA = [0,0,0,0];
+        var wd = md.stas.buttonDisableA = [0, 0, 0, 0];
+        var speechColor=md.stas.speechColor="#0f0";
 
         var rd = gr.radarData;
         if (rd.webReturnCmd) {
@@ -2404,6 +2463,23 @@ class SubRadarPane {
                 rd.webReturnCmd = 0;
             }
         }
+
+
+
+        var speechStatus=(rd.systemStatus0 >> 4) &1; 
+        speechStatus+=((rd.systemStatus0 >> 2) &1)*2; 
+
+        if(speechStatus==0)
+            md.stas.speechColor="#ccf";
+        if(speechStatus==1){//dial
+            md.stas.speechColor="#ffc";
+        }    
+        if(speechStatus==2){//ring
+            md.stas.speechColor="#f88";
+        }    
+        if(speechStatus==3)//connect
+            md.stas.speechColor="#cfc";
+
 
 
         var sta = (rd.systemStatus0 >> 0) & 3;
@@ -2456,12 +2532,12 @@ class SubRadarPane {
 
 
         var remoteEnable = (gr.radarData.systemStatus1 >> 30) & 1;
-        if(!remoteEnable){
-            wd[0]=1;
-            wd[1]=1;
-            wd[2]=1;
-            wd[3]=1;
-        }    
+        if (!remoteEnable) {
+            wd[0] = 1;
+            wd[1] = 1;
+            wd[2] = 1;
+            wd[3] = 1;
+        }
 
 
 
@@ -2524,7 +2600,7 @@ class SubRadarPane {
         var rw3 = "0.25rw";
         opts.xyArr = [
             [9999],
-            [rw1, rw1, rw1],
+            ["0.28rw", "0.28rw", "0.28rw", 9999],
             [rw2, rw2, rw2, rw2, rw2],
             [rw3, rw3, rw3, rw3],
             [rw3, rw3, rw3, rw3],
@@ -2653,7 +2729,7 @@ class SubRadarPane {
             }
         };
 
-        for (var i = 0; i < 16; i++) {
+        for (var i = 0; i < 17; i++) {
             var cname = lyMaps["mainBody"] + "~" + lyInx++;
             var opts = {};
             opts.setOptss = [];
@@ -2689,6 +2765,21 @@ class SubRadarPane {
                 blocks[cname] = { name: "positionPanel#" + i, type: "Model~MdaSetGroup~base.sys0", opts: opts };
                 continue;
             }
+
+            if (i === inx++) {
+                opts.innerText = "通話"
+                var watchReg = "self.fatherMd.stas.speechColor";
+                md.setInputWatch(opts, "directReg", watchReg, "baseColor", 1);
+                opts.actionFunc=function(iobj){
+                    console.log(iobj);
+                    gr.gbcs.command({ 'act': "speechAct" });
+                };
+                blocks[cname] = { name: "dialButton", type: "Component~Cp_base~button.sys0", opts: opts };
+                continue;
+            }
+
+
+
             if (i === inx++) {
                 opts.title = "環控狀態";
                 var setOpts = opts.setOpts = sopt.getOptsPara("led");
@@ -2875,7 +2966,7 @@ class SubRadarPane {
 
 
 
-class SubRadarPane1 {
+class SubRadarPanexxx {
     constructor() {
     }
     initOpts(md) {
@@ -2906,7 +2997,7 @@ class SubRadarPane1 {
         var st = md.stas;
         var wb = md.stas.ledStatusA = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         var wc = md.stas.buttonColorA = ["#888", "#888", "#888", "#888"];
-        var wd = md.stas.buttonDisableA = [0,0,0,0];
+        var wd = md.stas.buttonDisableA = [0, 0, 0, 0];
         var preText = "ctr1";
 
         var sysStatus = gr.radarData.systemStatus0 & 3;
@@ -2972,12 +3063,12 @@ class SubRadarPane1 {
         if (emergencyOn)
             wc[3] = "#fcc";
 
-        if(remoteEnable){
-            wd[0]=1;
-            wd[1]=1;
-            wd[2]=1;
-            wd[3]=1;
-        }    
+        if (remoteEnable) {
+            wd[0] = 1;
+            wd[1] = 1;
+            wd[2] = 1;
+            wd[3] = 1;
+        }
 
         mac.messageEditor(md);
     }
@@ -4715,7 +4806,8 @@ class SelfTest {
             var str = gr.syncSet.slotNameTbl[slotDataA[i] & 15];
             var slotCnt = (slotDataA[i] >> 4) & 15;
             if ((slotDataA[i] & 15) > 4) {
-                str = str + " " + (gr.syncSet.numTbl[slotCnt]);
+                if (gr.syncSet.numTbl[slotCnt])
+                    str = str + " " + (gr.syncSet.numTbl[slotCnt]);
             }
             st.slotNames.push(str);
         }
@@ -5945,9 +6037,9 @@ class DummyTargetCtrPane {
         for (var i = 0; i < 36; i++) {
             if ((gr.radarData.sspaPowerStatusAA[i] >> 4) & 1)
                 powerOn_f = 1;
-            var value = gr.radarData["sspaPowerV32iAA"][i];
-            value -= gr.paraSet[preText + "SspaPowerV32iOffs"];
-            value *= gr.paraSet[preText + "SspaPowerV32iGain"];
+            var value = gr.radarData["sspaPowerV50iAA"][i];
+            value -= gr.paraSet[preText + "SspaPowerV50iOffs"];
+            value *= gr.paraSet[preText + "SspaPowerV50iGain"];
             if (value < 0)
                 value = 0;
             cur += value;
@@ -5975,13 +6067,13 @@ class DummyTargetCtrPane {
 
         if (!powerOn_f) {
             wa[9] = "";
-            wa[90] = 0;
+            wv[9] = 0;
 
 
         }
         else {
             wa[9] = "" + cur.toFixed(1);
-            if (cur > (gr.paraSet[preText + "SspaPowerV32iZero"] * 36))
+            if (cur > (gr.paraSet[preText + "SspaPowerV50iZero"] * 36))
                 wac[9] = "#cfc";
             if (cur > gr.paraSet[preText + "SspaPowerAllV32iLimU"])
                 wac[9] = "#fcc";
@@ -7139,12 +7231,12 @@ class CtrSspaPowerStatus {
             var va = [0, "#ccc", 0, 0, 0, "---", "#eef", "---", "#eef", "---", "#eef", "---", "#eef", "---", "#eef", "---", "#eef"];
             va[0] = gr.paraSet[preText + "SspaPowerExistA"][i];
 
-            
+
             if (!(powerStatusA[i] & 1) || !va[0]) {//connect flag
                 watchAA.push(va);
                 continue;
             }
-                
+
             if (powerStatusA[i] & (1 << 4))
                 va[1] = "#cfc";
             if (powerStatusA[i] & (1 << 1))
@@ -8741,6 +8833,13 @@ class SyncGloble {
             ws.cmd(iobj.act);
             return;
         }
+        if (iobj.act === "speechAct") {
+            gr.logMessage.messages.push({ type: "cmd", text: "speechAct" });
+            ws.cmd(iobj.act);
+            return;
+        }
+
+
         if (iobj.act === "powerDown") {
             gr.logMessage.messages.push({ type: "cmd", text: "powerDown" });
             ws.cmd(iobj.act);
